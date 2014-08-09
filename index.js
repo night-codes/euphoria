@@ -1,9 +1,11 @@
-var cluster      = require('cluster');
-var observe      = require('observed');
-var extend       = require('util')._extend;
+var cluster = require('cluster');
+var observe = require('observed');
+var extend  = require('util')._extend;
+var fs      = require('fs.extra');
 
 var gracefull    = 0;
 var allready     = [];
+
 
 
 function initWorker() {
@@ -86,6 +88,8 @@ function connect(object, name, callback) {
 		throw new Error("Database with the same name (" + name + ") is already connected!");
 	allready.push(name);
 
+	fs.mkdirs(__dirname + "/db/");
+
 	var observ   = observe(object);
 	var change   = false;
 	var interval = 5000;
@@ -138,11 +142,3 @@ module.exports.connect   = connect;
 module.exports.load      = _load;
 module.exports.save      = _save;
 module.exports.gracefull = gracefull;
-
-
-
-
-
-
-
-
