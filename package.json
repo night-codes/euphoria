@@ -1,0 +1,37 @@
+{
+	"name"        : "euphoria",
+	"version"     : "0.0.1",
+	"description" : "Easy object database (with cluster use)",
+	"homepage"    : "https://github.com/mirrr/euphoria.git",
+	"author"      : {
+		"name" :  "Oleksiy Chechel",
+		"email": "alex.mirrr@gmail.com"
+	},
+	"contributors": [
+		{
+			"name" :  "Oleksiy Chechel",
+			"email": "alex.mirrr@gmail.com"
+		}
+	],
+	"engines": {
+		"node": ">= 0.11.13"
+	},
+	"dependencies": {
+		"fs.extra" : "*",
+		"observed" : "*"
+	},
+	"licenses": [
+		{
+		  "type": "MIT",
+		  "url": "http://www.opensource.org/licenses/mit-license.php"
+		}
+	],
+	"keywords": [
+		"euphoria",
+		"db",
+		"object"
+	],
+	"_id": "euphoria@0.1.0",
+	"readme": "See README.md",
+	"readmeFilename": "README.md"
+}
