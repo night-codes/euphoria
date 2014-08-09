@@ -2,7 +2,7 @@
 	"name"        : "euphoria",
 	"version"     : "0.0.1",
 	"description" : "Easy object database (with cluster use)",
-	"homepage"    : "https://github.com/mirrr/euphoria.git",
+	"homepage"    : "https://github.com/mirrr/euphoria",
 	"author"      : {
 		"name" :  "Oleksiy Chechel",
 		"email": "alex.mirrr@gmail.com"
@@ -31,6 +31,10 @@
 		"db",
 		"object"
 	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/mirrr/euphoria.git"
+	},
 	"_id": "euphoria@0.1.0",
 	"readme": "See README.md",
 	"readmeFilename": "README.md"
