@@ -1,4 +1,4 @@
-#euphoria
+#DB.Euphoria
 
 Easy object database for Node.JS (with cluster use)
 
@@ -23,7 +23,7 @@ euphoria.connect(obj2, "db2", function() {
 **euphoria.connect**
 ```javascript
 /**
- * Connect object your euphoria
+ * Connect object to DB.Euphoria
  * 
  * @param {Object}   object    Object for sync
  * @param {String}   name ID   Name of database file for sync (will be created automatically).
