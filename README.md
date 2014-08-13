@@ -64,9 +64,12 @@ euphoria.save(object, name, callback);
 
 ## Release History
 0.0.1 - Initial
+
 0.1.0 - Added protection from falls during dubbing DB. Support Cluster streams.
+
 0.2.0 - Support for older Node versions and getting rid of the Observed
 
 ## License
 Copyright (c) 2014 Oleksiy Chechel. 
+
 Licensed under the MIT license.
