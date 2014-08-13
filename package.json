@@ -1,6 +1,6 @@
 {
     "name": "euphoria",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "description": "Easy object database (with cluster use)",
     "homepage": "https://github.com/mirrr/euphoria",
     "author": {
@@ -14,11 +14,10 @@
         }
     ],
     "engines": {
-        "node": ">= 0.11.13"
+        "node": ">= 0.10"
     },
     "dependencies": {
-        "fs.extra": "*",
-        "observed": "*"
+        "fs.extra": "*"
     },
     "licenses": [
         {
@@ -28,6 +27,8 @@
     ],
     "keywords": [
         "euphoria",
+        "database",
+        "cluster",
         "db",
         "object"
     ],
@@ -35,6 +36,6 @@
         "type": "git",
         "url": "https://github.com/mirrr/euphoria.git"
     },
-    "_id": "euphoria@0.1.0",
+    "_id": "euphoria@0.2.0",
     "readmeFilename": "README.md"
 }

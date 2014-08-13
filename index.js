@@ -1,11 +1,36 @@
 var cluster = require('cluster');
-var observe = require('observed');
-var extend  = require('util')._extend;
+var _extend  = require('util')._extend;
 var fs      = require('fs.extra');
 
 var gracefull    = 0;
 var allready     = [];
+var dev          = (process.env.NODE_ENV && process.env.NODE_ENV == "dev");
 
+function extend(obj, obj2) {
+	var keys = Object.keys(obj2);
+	keys.forEach(function(key){
+		if (obj[key]) {
+			if(typeof obj[key] == 'object' && typeof obj2[key] == 'object') {
+				var keys2 = Object.keys(obj2[key]);
+				keys2.forEach(function(key2){
+					if (obj[key][key2]) {
+						if(typeof obj[key][key2] == 'object' && typeof obj2[key][key2] == 'object') {
+							_extend(obj[key], obj2[key]);
+						} else {
+							obj[key][key2] = obj2[key][key2];
+						}
+					} else {
+						obj[key][key2] = obj2[key][key2];
+					}
+				});
+			} else {
+				obj[key] = obj2[key];
+			}
+		} else {
+			obj[key] = obj2[key];
+		}
+	});
+}
 
 
 function initWorker() {
@@ -52,16 +77,13 @@ function load(worker, name, object, callback){
 
 
 function save(worker, name, object, callback){
-	clusterExec(worker, "save", [name, object], function(ret) {
-		if (typeof callback == "function") callback();
-	});
+	clusterExec(worker, "save", [name, object], callback);
 }
 
 
 function _load(name, object, callback){
 	var worker = initWorker();
-	clusterExec(worker, "load", [name, object], function(ret) {
-		extend(object, ret.result);
+	load(worker, name, object, function(){
 		worker.kill();
 		if (typeof callback == "function") callback(object);
 	});
@@ -70,7 +92,7 @@ function _load(name, object, callback){
 
 function _save(name, object, callback){
 	var worker = initWorker();
-	clusterExec(worker, "save", [name, object], function(ret) {
+	save(worker, name, object, function() {
 		worker.kill();
 		if (typeof callback == "function") callback(object);
 	});
@@ -90,36 +112,26 @@ function connect(object, name, callback) {
 
 	fs.mkdirs(__dirname + "/db/");
 
-	var observ   = observe(object);
-	var change   = false;
 	var interval = 5000;
-
-	observ.on('change', function() {
-		change = true;
-	});
-
 	var worker = initWorker();
 
+	var label = "DB.Euphoria: Database \"" + name + "\" is connected";
+	console.time(label);
 	load(worker, name, object, function() {
 
 		function tick() {
-			observ.deliverChanges();
-			if (change) {
+			if (worker) {
 				var saveStart = Date.now();
 				save(worker, name, object, function() {
-					change = false;
-					interval = Math.max(2000, (Date.now()-saveStart)*2);
-					if (worker) setTimeout(tick, interval);
+					interval = Math.max(5000, (Date.now()-saveStart));
+					setTimeout(tick, interval);
 				});
-			} else {
-				if (worker) setTimeout(tick, interval);
 			}
 		}
 		setTimeout(tick, interval);
 
 		gracefull++;
 		function gracefulExit() {
-			change = false;
 			save(worker, name, object, function() {
 				console.log("Exit save for " + name + "_euphoria.db");
 				gracefull--;
@@ -128,6 +140,7 @@ function connect(object, name, callback) {
 			});
 		}
 		process.once('SIGINT', gracefulExit).once('SIGTERM', gracefulExit);
+		console.timeEnd(label);
 		callback();
 	});
 
