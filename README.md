@@ -1,4 +1,4 @@
-#Euphoria
+# Euphoria
 
 Simple object database for Node.JS (with cluster use)
 
@@ -70,6 +70,7 @@ eu.save(object, name, callback);
 0.2.0 - Support for older Node versions and getting rid of the Observed   
 0.2.1 - Async call for functions   
 0.2.2 - Work without clusters: **require('euphoria').cluster(false);**, fixed sudden cessation of work worker`s   
+0.2.3 - Hot fix
 
 ## License
 Copyright (c) 2014 Oleksiy Chechel.   
