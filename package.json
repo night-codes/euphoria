@@ -1,6 +1,6 @@
 {
     "name": "euphoria",
-    "version": "0.2.3",
+    "version": "0.2.4",
     "description": "Simple object database for Node.JS (with cluster use)",
     "homepage": "https://github.com/mirrr/euphoria",
     "author": {
@@ -17,7 +17,8 @@
         "node": ">= 0.10"
     },
     "dependencies": {
-        "fs-extra": "*"
+        "fs-extra": "*",
+        "async": "*"
     },
     "licenses": [
         {
@@ -36,6 +37,6 @@
         "type": "git",
         "url": "https://github.com/mirrr/euphoria.git"
     },
-    "_id": "euphoria@0.2.3",
+    "_id": "euphoria@0.2.4",
     "readmeFilename": "README.md"
 }

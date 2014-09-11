@@ -70,7 +70,8 @@ eu.save(object, name, callback);
 0.2.0 - Support for older Node versions and getting rid of the Observed   
 0.2.1 - Async call for functions   
 0.2.2 - Work without clusters: **require('euphoria').cluster(false);**, fixed sudden cessation of work worker`s   
-0.2.3 - Hot fix
+0.2.3 - Fixed some bugs   
+0.2.4 - Added asynchrony in the non-clustered operations
 
 ## License
 Copyright (c) 2014 Oleksiy Chechel.   
