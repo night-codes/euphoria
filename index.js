@@ -1,7 +1,8 @@
 var cluster = require('cluster');
 var fs      = require('fs-extra');
-var lib     = require('./lib/worker.js');
-var extend  = require('./lib/extend.js');
+var lib     = require('./lib/worker');
+var extend  = require('./lib/extend');
+var logger  = require('./lib/logger');
 
 var gracefull    = 0;
 var allready     = [];
@@ -46,12 +47,12 @@ function clusterExec(worker, func, args, callback) {
 }
 
 
-function load(worker, name, object, callback){
-	process.nextTick(function () {
+function load(worker, object, name, callback){
+	setImmediate(function () {
 		if (!useCluster) {
-			lib.load(name, object, callback);
+			lib.load(object, name, callback);
 		} else {
-			clusterExec(worker, "load", [name, object], function(ret) {
+			clusterExec(worker, "load", [object, name], function(ret) {
 				if (ret.result) extend(object, ret.result);
 				if (typeof callback == "function") callback(ret.err, object);
 			});
@@ -60,12 +61,12 @@ function load(worker, name, object, callback){
 }
 
 
-function save(worker, name, object, callback){
-	process.nextTick(function () {
+function save(worker, object, name, callback){
+	setImmediate(function () {
 		if (!useCluster) {
-			lib.save(name, object, callback);
+			lib.save(object, name, callback);
 		} else {
-			clusterExec(worker, "save", [name, object], function(ret) {
+			clusterExec(worker, "save", [object, name], function(ret) {
 				if (typeof callback == "function") callback(ret.err, object);
 			});
 		}
@@ -73,30 +74,34 @@ function save(worker, name, object, callback){
 }
 
 
-function _load(name, object, callback){
-	process.nextTick(function () {
+function _load(object, name, callback){
+	setImmediate(function () {
 		if (!useCluster) {
-			lib.load(name, object, callback);
+			lib.load(object, name, callback);
 		} else {
 			var worker = initWorker();
-			load(worker, name, object, function(err, obj){
+			load(worker, object, name, function(err, obj){
 				worker.kill();
-				if (typeof callback == "function") callback(err, obj);
+				setImmediate(function() {
+					callback(err, obj);
+				});
 			});
 		}
 	});
 }
 
 
-function _save(name, object, callback){
-	process.nextTick(function () {
+function _save(object, name, callback){
+	setImmediate(function () {
 		if (!useCluster) {
-			lib.save(name, object, callback);
+			lib.save(object, name, callback);
 		} else {
 			var worker = initWorker();
-			save(worker, name, object, function() {
+			save(worker, object, name, function(err) {
 				worker.kill();
-				if (typeof callback == "function") callback(object);
+				setImmediate(function() {
+					if (typeof callback == "function") callback(err, object);
+				});
 			});
 		}
 	});
@@ -109,7 +114,7 @@ function setInterval(val){
 
 
 function connect(object, name, callback) {
-	process.nextTick(function () {
+	setImmediate(function () {
 		if (allready.indexOf(name) != -1)
 			throw new Error("[" + Date() + "] Database with the same name (" + name + ") is already connected!");
 		allready.push(name);
@@ -122,24 +127,24 @@ function connect(object, name, callback) {
 
 		var label = "[" + Date() + "] Euphoria: Database \"" + name + "\" is connected";
 		console.time(label);
-		load(worker, name, object, function(err) {
+		load(worker, object, name, function(err) {
 			if (!err) {
 				function tick() {
 					if (worker) {
 						var saveStart = Date.now();
-						save(worker, name, object, function() {
-							interval = Math.max(20000, (Date.now()-saveStart)*10);
+						save(worker, object, name, function() {
+							interval = Math.max(20000, (Date.now()-saveStart)*2);
 							setTimeout(tick, interval);
 						});
 					} else {
-						console.warn("[" + Date() + "] Euphoria: Worker \"" + name + "\" not found!");
+						logger.warn("Worker \"" + name + "\" not found!");
 					}
 				}
 				setTimeout(tick, interval);
 
 				gracefull++;
 				function gracefulExit() {
-					save(worker, name, object, function() {
+					save(worker, object, name, function() {
 						console.log("Exit save for " + name + "_euphoria.db");
 						gracefull--;
 						if (useCluster) worker.kill();
@@ -150,9 +155,11 @@ function connect(object, name, callback) {
 				process.once('SIGINT', gracefulExit).once('SIGTERM', gracefulExit);
 				console.timeEnd(label);
 			} else {
-				console.warn("[" + Date() + "] Euphoria: Database \"" + name + "\" is not connected (object offline)!");
+				logger.warn("Database \"" + name + "\" is not connected (object offline)!");
 			}
-			callback();
+			setImmediate(function() {
+				callback();
+			});
 		});
 	});
 }

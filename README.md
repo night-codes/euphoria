@@ -71,7 +71,8 @@ eu.save(object, name, callback);
 0.2.1 - Async call for functions   
 0.2.2 - Work without clusters: **require('euphoria').cluster(false);**, fixed sudden cessation of work worker`s   
 0.2.3 - Fixed some bugs   
-0.2.4 - Added asynchrony in the non-clustered operations
+0.2.4 - Added asynchrony in the non-clustered operations   
+0.2.5 - Balance between the load and the speed in async mode as for me;) (added some asynchrony in JSON stringify). Unified order of arguments.
 
 ## License
 Copyright (c) 2014 Oleksiy Chechel.   
