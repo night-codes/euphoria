@@ -64,9 +64,9 @@ function load(worker, object, name, callback){
 function save(worker, object, name, callback){
 	setImmediate(function () {
 		if (!useCluster) {
-			lib.save(object, name, callback);
+			lib.pathSave(object, name, callback);
 		} else {
-			clusterExec(worker, "save", [object, name], function(ret) {
+			clusterExec(worker, "pathSave", [object, name], function(ret) {
 				if (typeof callback == "function") callback(ret.err, object);
 			});
 		}
@@ -94,7 +94,7 @@ function _load(object, name, callback){
 function _save(object, name, callback){
 	setImmediate(function () {
 		if (!useCluster) {
-			lib.save(object, name, callback);
+			lib.pathSave(object, name, callback);
 		} else {
 			var worker = initWorker();
 			save(worker, object, name, function(err) {
@@ -133,7 +133,7 @@ function connect(object, name, callback) {
 					if (worker) {
 						var saveStart = Date.now();
 						save(worker, object, name, function() {
-							interval = Math.max(20000, (Date.now()-saveStart)*2);
+							interval = Math.max(30000, (Date.now()-saveStart)*2);
 							setTimeout(tick, interval);
 						});
 					} else {

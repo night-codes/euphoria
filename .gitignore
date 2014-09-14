@@ -3,7 +3,7 @@
 nbproject/
 
 # Database
-db/*.db
+db/*
 
 # Node modules
 node_modules*
