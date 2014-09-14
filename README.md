@@ -38,7 +38,7 @@ eu.connect(obj2, "db2", function() {
  */
 eu.connect(object, name, callback);
 ```
-
+   
 **euphoria.load**
 ```javascript
 /**
@@ -50,7 +50,7 @@ eu.connect(object, name, callback);
  */
 eu.load(object, name, callback);
 ```
-
+   
 **euphoria.save**
 ```javascript
 /**
@@ -62,20 +62,30 @@ eu.load(object, name, callback);
  */
 eu.save(object, name, callback);
 ```
-
-
+   
+   
 ## Release History
 0.0.1 - Initial   
-0.1.0 - Added protection from falls during dubbing DB. Support Cluster streams.   
+0.1.0 - Added protection from falls during dubbing DB. Support Cluster streams.      
 0.2.0 - Support for older Node versions and getting rid of the Observed   
 0.2.1 - Async call for functions   
 0.2.2 - Work without clusters: **require('euphoria').cluster(false);**, fixed sudden cessation of work worker`s   
 0.2.3 - Fixed some bugs   
 0.2.4 - Added asynchrony in the non-clustered operations   
-0.2.5 - Balance between the load and the speed in async mode as for me;) (added some asynchrony in JSON stringify). Unified order of arguments.
-
-0.3.0 - Splitting an object across multiple files.
-
+0.2.5 - Balance between the load and the speed in async mode as for me;) (added some asynchrony in JSON stringify). Unified order of arguments.   
+   
+0.3.0 - Splitting an object across multiple files.   
+   
+   
 ## License
-Copyright (c) 2014 Oleksiy Chechel.   
-Licensed under the MIT license.
+   
+MIT License   
+   
+Copyright (C) 2013 Oleksiy Chechel (alex.mirrr@gmail.com)   
+   
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:   
+   
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.   
+   
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+

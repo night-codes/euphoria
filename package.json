@@ -4,26 +4,27 @@
     "description": "Simple object database for Node.JS (with cluster use)",
     "homepage": "https://github.com/mirrr/euphoria",
     "author": {
-        "name": "Oleksiy Chechel",
-        "email": "alex.mirrr@gmail.com"
+        "name"  : "Oleksiy Chechel",
+        "email" : "alex.mirrr@gmail.com"
     },
     "contributors": [
         {
-            "name": "Oleksiy Chechel",
-            "email": "alex.mirrr@gmail.com"
+            "name"  : "Oleksiy Chechel",
+            "email" : "alex.mirrr@gmail.com"
         }
     ],
     "engines": {
         "node": ">= 0.10"
     },
     "dependencies": {
-        "fs-extra": "*",
-        "async": "*"
+        "fs-extra" : "*",
+        "async"    : "*",
+        "easy-zip" : "*"
     },
     "licenses": [
         {
-            "type": "MIT",
-            "url": "http://www.opensource.org/licenses/mit-license.php"
+            "type" : "MIT",
+            "url"  : "http://www.opensource.org/licenses/mit-license.php"
         }
     ],
     "keywords": [
@@ -34,8 +35,8 @@
         "object"
     ],
     "repository": {
-        "type": "git",
-        "url": "https://github.com/mirrr/euphoria.git"
+        "type" : "git",
+        "url"  : "https://github.com/mirrr/euphoria.git"
     },
     "_id": "euphoria@0.3.0",
     "readmeFilename": "README.md"
