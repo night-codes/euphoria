@@ -7,7 +7,7 @@ var logger  = require('./lib/logger');
 var gracefull    = 0;
 var allready     = [];
 var dev          = (process.env.NODE_ENV && process.env.NODE_ENV == "dev");
-var useCluster   = true;
+var useCluster   = false;
 
 
 
@@ -67,7 +67,7 @@ function save(worker, object, name, callback){
 			lib.pathSave(object, name, callback);
 		} else {
 			clusterExec(worker, "pathSave", [object, name], function(ret) {
-				if (typeof callback == "function") callback(ret.err, object);
+				if (typeof callback == "function") callback(ret.err);
 			});
 		}
 	});
@@ -75,15 +75,28 @@ function save(worker, object, name, callback){
 
 
 function _load(object, name, callback){
+
+	var label = "[" + Date() + "] Euphoria: READ \"" + name + "\" OK! ";
+	if (!dev) {
+		logger.log("TRY READ... \"" + name + "\"");
+		console.time(label);
+	}
+
 	setImmediate(function () {
 		if (!useCluster) {
-			lib.load(object, name, callback);
+			lib.load(object, name, function(err) {
+				if(!dev && !err) console.timeEnd(label);
+				setImmediate(function() {
+					callback(err);
+				});
+			});
 		} else {
 			var worker = initWorker();
-			load(worker, object, name, function(err, obj){
+			load(worker, object, name, function(err){
 				worker.kill();
+				if(!dev && !err) console.timeEnd(label);
 				setImmediate(function() {
-					callback(err, obj);
+					callback(err);
 				});
 			});
 		}
@@ -92,15 +105,28 @@ function _load(object, name, callback){
 
 
 function _save(object, name, callback){
+
+	var label = "[" + Date() + "] Euphoria: WRITE \"" + name + "\" OK! ";
+	if (!dev) {
+		logger.log("TRY WRITE... \"" + name + "\"");
+		console.time(label);
+	}
+
 	setImmediate(function () {
 		if (!useCluster) {
-			lib.pathSave(object, name, callback);
+			lib.pathSave(object, name, function(err) {
+				if(!dev && !err) console.timeEnd(label);
+				setImmediate(function() {
+					if (typeof callback == "function") callback(err);
+				});
+			});
 		} else {
 			var worker = initWorker();
 			save(worker, object, name, function(err) {
 				worker.kill();
+				if(!dev && !err) console.timeEnd(label);
 				setImmediate(function() {
-					if (typeof callback == "function") callback(err, object);
+					if (typeof callback == "function") callback(err);
 				});
 			});
 		}
@@ -136,26 +162,32 @@ function connect(object, name, callback) {
 							interval = Math.max(30000, (Date.now()-saveStart)*2);
 							setTimeout(tick, interval);
 						});
-					} else {
-						logger.warn("Worker \"" + name + "\" not found!");
 					}
 				}
 				setTimeout(tick, interval);
 
 				gracefull++;
 				function gracefulExit() {
+
+					var callee = arguments.callee;
+					var nokill = arguments[0] || false;
+
 					save(worker, object, name, function() {
-						console.log("Exit save for " + name + "_euphoria.db");
 						gracefull--;
 						if (useCluster) worker.kill();
 						worker = false;
-						if (!gracefull) process.exit();
+						logger.log("Database \"" + name + "\" is disconnected");
+						if (nokill) {
+							process.removeListener('SIGINT', callee).removeListener('SIGTERM', callee).removeListener('term_' + name, callee);
+							nokill();
+						}
+						if (!gracefull && !nokill) process.exit();
 					});
 				}
-				process.once('SIGINT', gracefulExit).once('SIGTERM', gracefulExit);
+				process.once('SIGINT', gracefulExit).once('SIGTERM', gracefulExit).on('term_' + name, gracefulExit);
 				console.timeEnd(label);
 			} else {
-				logger.warn("Database \"" + name + "\" is not connected (object offline)!");
+				logger.warn("Database \"" + name + "\" is not connected (object offline)! " + err);
 			}
 			setImmediate(function() {
 				callback();
@@ -164,15 +196,22 @@ function connect(object, name, callback) {
 	});
 }
 
+function disconnect(name, callback) {
+	if (typeof callback != "function") callback = function(){};
+
+	process.emit('term_' + name, callback);
+}
 
 function grace() {console.warn(" - Exit interrupt..."); if (!gracefull) process.exit();}
 process.once('SIGINT', grace).once('SIGTERM', grace);
 
 
-module.exports.connect   = connect;
-module.exports.load      = _load;
-module.exports.save      = _save;
-module.exports.gracefull = gracefull;
+module.exports.connect    = connect;
+module.exports.disconnect = disconnect;
+module.exports.load       = _load;
+module.exports.save       = _save;
+module.exports.gracefull  = gracefull;
+
 module.exports.cluster = function(bool){
 	useCluster = bool;
 	return module.exports;
