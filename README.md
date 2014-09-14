@@ -74,6 +74,8 @@ eu.save(object, name, callback);
 0.2.4 - Added asynchrony in the non-clustered operations   
 0.2.5 - Balance between the load and the speed in async mode as for me;) (added some asynchrony in JSON stringify). Unified order of arguments.
 
+0.3.0 - Splitting an object across multiple files.
+
 ## License
 Copyright (c) 2014 Oleksiy Chechel.   
 Licensed under the MIT license.

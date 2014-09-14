@@ -1,6 +1,6 @@
 {
     "name": "euphoria",
-    "version": "0.2.5",
+    "version": "0.3.0",
     "description": "Simple object database for Node.JS (with cluster use)",
     "homepage": "https://github.com/mirrr/euphoria",
     "author": {
@@ -37,6 +37,6 @@
         "type": "git",
         "url": "https://github.com/mirrr/euphoria.git"
     },
-    "_id": "euphoria@0.2.5",
+    "_id": "euphoria@0.3.0",
     "readmeFilename": "README.md"
 }
