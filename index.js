@@ -2,7 +2,6 @@ var cluster = require('cluster');
 var fs      = require('fs-extra');
 var lib     = require('./lib/worker');
 var extend  = require('./lib/extend');
-var logger  = require('./lib/logger');
 
 var gracefull    = 0;
 var allready     = [];
@@ -76,16 +75,13 @@ function save(worker, object, name, callback){
 
 function _load(object, name, callback){
 
-	var label = "[" + Date() + "] Euphoria: READ \"" + name + "\" OK! ";
-	if (!dev) {
-		logger.log("TRY READ... \"" + name + "\"");
-		console.time(label);
+	if (dev) {
+		console.log("TRY READ... \"" + name + "\"");
 	}
 
 	setImmediate(function () {
 		if (!useCluster) {
 			lib.load(object, name, function(err) {
-				if(!dev && !err) console.timeEnd(label);
 				setImmediate(function() {
 					callback(err);
 				});
@@ -94,7 +90,6 @@ function _load(object, name, callback){
 			var worker = initWorker();
 			load(worker, object, name, function(err){
 				worker.kill();
-				if(!dev && !err) console.timeEnd(label);
 				setImmediate(function() {
 					callback(err);
 				});
@@ -106,16 +101,13 @@ function _load(object, name, callback){
 
 function _save(object, name, callback){
 
-	var label = "[" + Date() + "] Euphoria: WRITE \"" + name + "\" OK! ";
-	if (!dev) {
-		logger.log("TRY WRITE... \"" + name + "\"");
-		console.time(label);
+	if (dev) {
+		console.log("TRY WRITE... \"" + name + "\"");
 	}
 
 	setImmediate(function () {
 		if (!useCluster) {
 			lib.pathSave(object, name, function(err) {
-				if(!dev && !err) console.timeEnd(label);
 				setImmediate(function() {
 					if (typeof callback == "function") callback(err);
 				});
@@ -123,9 +115,7 @@ function _save(object, name, callback){
 		} else {
 			var worker = initWorker();
 			save(worker, object, name, function(err) {
-				worker.kill();
-				if(!dev && !err) console.timeEnd(label);
-				setImmediate(function() {
+				worker.kill();				setImmediate(function() {
 					if (typeof callback == "function") callback(err);
 				});
 			});
@@ -142,7 +132,7 @@ function setInterval(val){
 function connect(object, name, callback) {
 	setImmediate(function () {
 		if (allready.indexOf(name) != -1)
-			throw new Error("[" + Date() + "] Database with the same name (" + name + ") is already connected!");
+			throw new Error("Database with the same name (" + name + ") is already connected!");
 		allready.push(name);
 
 		fs.mkdirs(__dirname + "/db/");
@@ -151,7 +141,7 @@ function connect(object, name, callback) {
 		var worker = true;
 		if (useCluster)  worker = initWorker();
 
-		var label = "[" + Date() + "] Euphoria: Database \"" + name + "\" is connected";
+		var label = "Euphoria: Database \"" + name + "\" is connected";
 		console.time(label);
 		load(worker, object, name, function(err) {
 			if (!err) {
@@ -176,7 +166,7 @@ function connect(object, name, callback) {
 						gracefull--;
 						if (useCluster) worker.kill();
 						worker = false;
-						logger.log("Database \"" + name + "\" is disconnected");
+						console.log("Database \"" + name + "\" is disconnected");
 						if (nokill) {
 							process.removeListener('SIGINT', callee).removeListener('SIGTERM', callee).removeListener('term_' + name, callee);
 							nokill();
@@ -187,7 +177,7 @@ function connect(object, name, callback) {
 				process.once('SIGINT', gracefulExit).once('SIGTERM', gracefulExit).on('term_' + name, gracefulExit);
 				console.timeEnd(label);
 			} else {
-				logger.warn("Database \"" + name + "\" is not connected (object offline)! " + err);
+				console.warn("Database \"" + name + "\" is not connected (object offline)! " + err);
 			}
 			setImmediate(function() {
 				callback();
