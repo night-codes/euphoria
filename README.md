@@ -1,6 +1,6 @@
 # Euphoria
 
-Simple object database for Node.JS (with cluster use)
+Simple object database for Node.JS (experiment, not for production =) )
 
 ## Getting Started
 ```javascript
@@ -78,21 +78,6 @@ eu.load(object, name, callback);
  */
 eu.save(object, name, callback);
 ```
-   
-   
-## Release History
-0.0.1 - Initial   
-0.1.0 - Added protection from falls during dubbing DB. Support Cluster streams.   
-   
-0.2.0 - Support for older Node versions and getting rid of the Observed   
-0.2.1 - Async call for functions   
-0.2.2 - Work without clusters: **require('euphoria').cluster(false);**, fixed sudden cessation of work worker`s   
-0.2.3 - Fixed some bugs   
-0.2.4 - Added asynchrony in the non-clustered operations   
-0.2.5 - Balance between the load and the speed in async mode as for me;) (added some asynchrony in JSON stringify). Unified order of arguments.   
-   
-0.3.0 - Splitting an object across multiple files.   
-   
    
 ## License
    
